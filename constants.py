@@ -16,7 +16,7 @@ keywords = {
     'then' : 'TK_THEN',
     'downto' : 'TK_DOWNTO',
     'string' : 'TK_STRING',
-    
+    'real' : 'TK_REAL',
 }
 
 
