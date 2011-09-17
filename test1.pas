@@ -1,7 +1,7 @@
 program test_declarations;
 
 var k, l : integer;
-var m , n : string;
+var m, n : string;
 var o, p : real;
 
 begin
