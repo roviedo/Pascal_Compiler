@@ -14,7 +14,7 @@ class Scanner:
 
     def read_file(self):
         self.data  = open('test0.pas' , 'r').read().split()
-        print self.data
+        #print self.data
         self.split_data()
     def variable(self):
         #begin with letter or underscore
@@ -32,6 +32,9 @@ class Scanner:
                 newdata.append(i[:-1])
                 newdata.append(i[-1])
             elif i.endswith(","):
+                newdata.append(i[:-1])
+                newdata.append(i[-1])
+            elif i.endswith(":"):
                 newdata.append(i[:-1])
                 newdata.append(i[-1])
             else:
