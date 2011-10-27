@@ -13,7 +13,7 @@ class Scanner:
         self.variable_matcher = re.compile('^([A-Za-z]|(_))([A-Za-z]|(_)|[0-9])*$')
 
     def read_file(self):
-        self.data  = open('test1.pas' , 'r').read().split()
+        self.data  = open('test0.pas' , 'r').read().split()
         print self.data
         self.split_data()
     def variable(self):
@@ -61,9 +61,10 @@ class Scanner:
                 print "Error", i
         
         #print self.tokens
-        for token in self.tokens:
-            print token.name
-
+        #for token in self.tokens:
+         #   print token.name
+        return self.tokens
+"""
 def main():
     x = Scanner()
     x.read_file()
@@ -71,3 +72,4 @@ def main():
     
 if __name__ == "__main__":
     main()
+"""
