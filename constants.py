@@ -17,6 +17,7 @@ keywords = {
     'downto' : 'TK_DOWNTO',
     'string' : 'TK_STRING',
     'real' : 'TK_REAL',
+    'boolean' : 'TK_BOOLEAN',
 }
 
 
@@ -29,6 +30,14 @@ operators = {
     '<' : 'TK_LESS',
     ':=' : 'TK_ASSIGN',
     '=' : 'TK_EQUAL',
+    '<=' : 'TK_LESS_EQ',
+    '>=' : 'TK_GREATER_EQ',
+    '<>' : 'TK_NOT_EQ',
+    'in' : 'TK_IN',
+    '&' : 'TK_BIT_AND', 
+    'and' : 'TK_AND',
+    'shl' : 'TK_LEFT_SHIFT',
+    'shr' : 'TK_RIGHT_SHIFT',
 }
 
 symbols = {
@@ -41,4 +50,6 @@ symbols = {
     '&' : 'TK_AMP',
     ':' : 'TK_COLON',
     ';' : 'TK_SCOLON',
+    '(' : 'TK_LEFT_PAREN',
+    ')' : 'TK_RIGHT_PAREN',
 }
