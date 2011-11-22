@@ -53,3 +53,19 @@ symbols = {
     '(' : 'TK_LEFT_PAREN',
     ')' : 'TK_RIGHT_PAREN',
 }
+
+opcodes = {
+    'push' : 0,
+    'move' : 1,
+    'movei': 2,
+    'mult' : 3,
+    'pop'  : 4,
+    'halt' : 5,
+    'print': 6,
+    'println': 7,
+    'add' : 8,
+    'sub' : 9,
+    'dup' : 10,
+    'exch' : 11,
+    'div' : 12,
+}
