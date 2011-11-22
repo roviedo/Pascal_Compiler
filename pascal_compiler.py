@@ -3,7 +3,7 @@
 import sys
 from parser import *
 from scanner import *
-
+from vm import *
 def main():
     
     x = Scanner()
@@ -16,6 +16,9 @@ def main():
     #y.next_token()
     print "starting parser..."
     codes = y.parse()
-    print codes
+    #print codes
+    z = VirtualMachine(codes)
+    b = z.execute()
+    print b
 if __name__ == "__main__":
     main()
