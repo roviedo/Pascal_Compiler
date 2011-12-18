@@ -13,12 +13,15 @@ class Scanner:
         self.variable_matcher = re.compile('^([A-Za-z]|(_))([A-Za-z]|(_)|[0-9])*$')
 
     def read_file(self):
-        self.data  = open('test1a.pas' , 'r').read()
+        self.data  = open('test1.pas' , 'r').read()
         for symbol, token in symbols.items():
-            self.data = self.data.replace(str(symbol), ' ' + symbol + ' ')
-        print self.data
+            if symbol != '.' and symbol != '=' and symbol != ':':
+                self.data = self.data.replace(str(symbol), ' ' + symbol + ' ')
+        print "\nthis is before replace", self.data
+        self.data = self.data.replace('end.' , 'end . ')
+        print "\nthis is after replace ...." , self.data
         self.data = self.data.split()
-        print self.data
+        print "\nthis is after split ...." , self.data
         #self.split_data()
     def variable(self):
         #begin with letter or underscore
@@ -60,7 +63,9 @@ class Scanner:
             elif i.isdigit():
                 print "TK_INTLIT"
                 self.tokens.append(Token('TK_INTLIT', value = int(i)))
-                
+            elif self.isreal(i):
+                print "TK_REAL"
+                self.tokens.append(Token('TK_REALLIT', value = float(i)))
             elif self.variable_matcher.match(i):
                 print "TK_IDENTIFIER"
                 self.tokens.append(Token('TK_IDENTIFIER', value = i))
@@ -71,6 +76,12 @@ class Scanner:
         #for token in self.tokens:
          #   print token.name
         return self.tokens
+    def isreal(self, i):
+        try:
+            result = str(float(i)) == i
+            return result
+        except ValueError:
+            return False
 """
 def main():
     x = Scanner()

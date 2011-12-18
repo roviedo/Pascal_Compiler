@@ -15,6 +15,7 @@ class Parser():
         self.previous_token = None
         self.current_token = self.tokens.pop()
         self.codes = []
+        self.symboltable = []
     def print_tokens(self):
         for i in self.tokens:
             print i.name
@@ -67,6 +68,8 @@ class Parser():
         self.match(keywords['var'])
         #self.match(keywords['TK_IDENTIFIER'])
         while(self.match('TK_IDENTIFIER')):
+            self.symboltable.append(self.previous_token.value)
+            self.codes.append((opcodes['push'] , self.symboltable.index(self.previous_token.value)))
             if self.match(symbols[','], do_not_exit =True):
                 #print "reached a comma"
                 continue
@@ -114,7 +117,7 @@ class Parser():
             self.prod_F()
             self.codes.append((opcodes['div'] , None))
             #print "got div sign\n"
-            self.prod_T()
+            self.prod_T_prime()
         elif self.match(operators['and'], do_not_exit = True):
             self.prod_F()
             #print "got boolean and\n"
@@ -130,14 +133,30 @@ class Parser():
 
     def prod_F(self):
         if self.match('TK_IDENTIFIER', do_not_exit = True):
-            print "Got Identifier"
+            print "Got Identifier ...."
+            
+            lhs = self.previous_token
+            if self.previous_token.value not in self.symboltable:
+                print "UNDECLARED VARIABLE"
+                exit(0)
+            if self.match(operators[':='], do_not_exit = True):    
+                self.assignment(lhs)
+            else:
+                print "Previous token: " , self.previous_token.name, "value", self.previous_token.value
+                print "Current token: " , self.current_token.name, "value", self.current_token.value
+                self.codes.append((opcodes['push'], self.symboltable.index(self.previous_token.value)))
+                
         elif self.match('TK_INTLIT', do_not_exit = True):
             #print "Got Intlit"
-            self.codes.append((opcodes['push'] , self.previous_token.value))
-        elif self.match(symbols['(']):
-            print "reached left parenthesis"
-            self.prod_L()
-            self.match(symbols[')'])
+            self.codes.append((opcodes['pushi'] , self.previous_token.value))
+            return type(self.previous_token.value)
+        elif self.match('TK_REALLIT' , do_not_exit = True):
+            self.codes.append((opcodes['pushi'], self.previous_token.value))
+            return type(self.previous_token.value)
+        #elif self.match(symbols['(']):
+        #    print "reached left parenthesis"
+        #    self.prod_L()
+        #    self.match(symbols[')'])
         #elif self.match(symbols[')']):
         #    print "reached right parenthesis"
         elif self.match(keywords['write'],do_not_exit =True):
@@ -153,8 +172,10 @@ class Parser():
         else:
             print self.current_token.name
             print "Reached epsilon"
-
     def prod_L(self):
+        self.prod_E()
+        self.prod_L_prime()
+    def prod_L_prime(self):
         if self.match(operators['='], do_not_exit = True):
             self.prod_E()
         elif self.match(operators['<>'], do_not_exit = True):
@@ -236,3 +257,21 @@ class Parser():
     def repeat_statement(self):
         self.match(keywords['repeat'])
         print "matched repeat"
+    def assignment(self, lhs):
+        print "matched Assignment"
+        rhs = self.prod_L()
+        #rhs = self.typematcher(self.previous_token.value, rhs)
+        self.codes.append((opcodes['pop'], self.symboltable.index(lhs.value)))
+        #self.codes.append((opcodes['pop'], self.previous_token.value))
+    def typematcher(self, lhs, rhs):
+        if type(lhs) == type(rhs):
+            return rhs
+        elif type(lhs) == int and type(rhs)== float:
+            return int(rhs)
+        elif type(lhs) == float and type(rhs) == int:
+            return float(rhs)
+        else:
+            print "Error not same type"
+            exit(0)
+    def if_stat(self):
+        pass

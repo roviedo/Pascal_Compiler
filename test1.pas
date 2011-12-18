@@ -5,8 +5,9 @@ var m, n : string;
 var o, p : real;
 
 begin
-   if;
-   4 + 5;
+   k := 3 + 4;
+   l := k + 5;
+   4.0 + 5;
    10 - 6;
    5 * 7;
    9 / 3;

@@ -17,13 +17,12 @@ keywords = {
     'downto' : 'TK_DOWNTO',
     'string' : 'TK_STRING',
     'real' : 'TK_REAL',
-    'mod':'TK_MOD_OP'
+    'mod':'TK_MOD_OP',
     'boolean' : 'TK_BOOLEAN',
     'write' : 'TK_WRITE', 
     'writeln' : 'TK_WRITELN',
     'mod':'TK_MOD',
     'not':'TK_NOT',
-    'and':'TK_AND',
     'array':'TK_ARRAY',
     'of':'TK_OF',
     'case':'TK_CASE',
@@ -36,7 +35,7 @@ keywords = {
     'type':'TK_TYPE',
     'while':'TK_WHILE',
     'with':'TK_WITH',
-  
+    'function': 'TK_FUNC',
 }
 
 
@@ -53,7 +52,8 @@ operators = {
     '>=' : 'TK_GREATER_EQ',
     '<>' : 'TK_NOT_EQ',
     'in' : 'TK_IN',
-    '&' : 'TK_BIT_AND', 
+    '&' : 'TK_BIT_AND',
+    'and':'TK_AND',
     'shl' : 'TK_LEFT_SHIFT',
     'shr' : 'TK_RIGHT_SHIFT',
 }
@@ -88,4 +88,5 @@ opcodes = {
     'dup' : 10,
     'exch' : 11,
     'div' : 12,
+    'pushi': 13,
 }

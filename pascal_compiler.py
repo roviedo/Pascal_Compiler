@@ -19,6 +19,5 @@ def main():
     #print codes
     z = VirtualMachine(codes)
     b = z.execute()
-    print b
 if __name__ == "__main__":
     main()
