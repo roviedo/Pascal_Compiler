@@ -97,6 +97,10 @@ class Parser():
             self.codes.append((opcodes['sub'], None))
             #print"got minus sign\n"
             self.prod_E_prime()
+        
+
+        
+    
     def prod_T(self):
         self.prod_F()
         self.prod_T_prime()
@@ -130,14 +134,22 @@ class Parser():
         elif self.match('TK_INTLIT', do_not_exit = True):
             #print "Got Intlit"
             self.codes.append((opcodes['push'] , self.previous_token.value))
-        #elif self.match(symbols['(']):
-        #    print "reached left parenthesis"
+        elif self.match(symbols['(']):
+            print "reached left parenthesis"
+            self.prod_L()
+            self.match(symbols[')'])
         #elif self.match(symbols[')']):
         #    print "reached right parenthesis"
-        
+        elif self.match(keywords['write'],do_not_exit =True):
+            result = self.write_statement()
+            self.codes.append((opcodes['print'], result))
+        elif self.match(keywords['writeln'], do_not_exit = True):
+            result = self.write_statement()
+            self.codes.append((opcodes['println'], result))
         elif self.match(operators['-'], do_not_exit = True):
             self.prod_F()
             #print "Got minus sign in prod_F\n"
+        
         else:
             print self.current_token.name
             print "Reached epsilon"
@@ -152,6 +164,7 @@ class Parser():
         elif self.match(operators['<'], do_not_exit = True):
             self.prod_E()
         elif self.match(operators['<='], do_not_exit = True):
+            print "matched less than or equal to\n"
             self.prod_E()
         elif self.match(operators['>='], do_not_exit = True):
             self.prod_E()
@@ -163,6 +176,7 @@ class Parser():
             self.var_statement()
             self.match(symbols[';'])
             self.declaration_tail()
+
     def declaration_tail(self):
         self.declarations()
 
@@ -178,6 +192,19 @@ class Parser():
         
         self.match(keywords['end'])
         #print "successfully matched first end\n"
+    
+    def write_statement(self):
+        self.match(symbols['('])
+        self.match(symbols['"'])
+        result = ''
+        while self.current_token.name != symbols['"']:
+            print "this is value" , self.current_token.value
+            print "this is name" , self.current_token.name
+            result += self.current_token.value + ' '
+            self.next_token()
+        self.match(symbols['"'])
+        self.match(symbols[')'])
+        return result
 
     def statement_list(self):
         """
@@ -197,4 +224,15 @@ class Parser():
             #print "about to try prod_e\n"
             self.prod_E()
             self.match(symbols[';'])
-            
+    def if_statement(self):
+        self.match(keywords['if'])
+        print "matched if"
+    def while_statement(self):
+        self.match(keywords['while'])
+        print "matched while"
+    def for_statement(self):
+        self.match(keywords['for'])
+        print "matched for"
+    def repeat_statement(self):
+        self.match(keywords['repeat'])
+        print "matched repeat"

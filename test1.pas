@@ -5,6 +5,7 @@ var m, n : string;
 var o, p : real;
 
 begin
+   if;
    4 + 5;
    10 - 6;
    5 * 7;

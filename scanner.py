@@ -13,9 +13,13 @@ class Scanner:
         self.variable_matcher = re.compile('^([A-Za-z]|(_))([A-Za-z]|(_)|[0-9])*$')
 
     def read_file(self):
-        self.data  = open('test1a.pas' , 'r').read().split()
-        #print self.data
-        self.split_data()
+        self.data  = open('test1a.pas' , 'r').read()
+        for symbol, token in symbols.items():
+            self.data = self.data.replace(str(symbol), ' ' + symbol + ' ')
+        print self.data
+        self.data = self.data.split()
+        print self.data
+        #self.split_data()
     def variable(self):
         #begin with letter or underscore
         #Can only contain letters, numbers, or underscore
@@ -46,7 +50,7 @@ class Scanner:
         for i in self.data:
             if i in keywords:
                 print "Got keyword" , keywords[i]
-                self.tokens.append(Token(keywords[i]))
+                self.tokens.append(Token(keywords[i],i))
             elif i in operators:
                 print "Got operators" , operators[i]
                 self.tokens.append(Token(operators[i]))
