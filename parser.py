@@ -2,7 +2,7 @@
 import sys
 from scanner import *
 from constants import *
-
+import random
 class Parser():
     def __init__(self, tokens):
         """
@@ -32,7 +32,7 @@ class Parser():
             
             return True
         elif not do_not_exit:
-            print "MATCH: error, was expecting: " + name + " got : " + self.current_token.name
+            #print "MATCH: error, was expecting: " + name + " got : " + self.current_token.name
             exit(0)
         return False
     def next_token(self):
@@ -50,9 +50,9 @@ class Parser():
         #self.var_statement()
         self.declarations()
         self.begin_statement()
-        print "finished begin statement"
+        #print "finished begin statement"
         self.match(symbols['.'])
-        print "finished match ."
+        #print "finished match ."
         return self.codes
     def program_statement(self):
         """
@@ -62,7 +62,7 @@ class Parser():
         self.match(keywords['program'])
         self.match('TK_IDENTIFIER')
         self.match(symbols[';'])
-        #print "Matched Program Statement successfully"
+        
 
     def var_statement(self):
         self.match(keywords['var'])
@@ -85,7 +85,8 @@ class Parser():
             print "this is a boolean"
         elif self.match(keywords['real']):
             print "This is a real"
-    
+        else:
+            print "Did not match a valid Type"
     def prod_E(self):
         self.prod_T()
         self.prod_E_prime()
@@ -133,7 +134,6 @@ class Parser():
 
     def prod_F(self):
         if self.match('TK_IDENTIFIER', do_not_exit = True):
-            print "Got Identifier ...."
             
             lhs = self.previous_token
             if self.previous_token.value not in self.symboltable:
@@ -142,23 +142,22 @@ class Parser():
             if self.match(operators[':='], do_not_exit = True):    
                 self.assignment(lhs)
             else:
-                print "Previous token: " , self.previous_token.name, "value", self.previous_token.value
-                print "Current token: " , self.current_token.name, "value", self.current_token.value
+                #print "Previous token: " , self.previous_token.name, "value", self.previous_token.value
+                #print "Current token: " , self.current_token.name, "value", self.current_token.value
                 self.codes.append((opcodes['push'], self.symboltable.index(self.previous_token.value)))
                 
         elif self.match('TK_INTLIT', do_not_exit = True):
-            #print "Got Intlit"
             self.codes.append((opcodes['pushi'] , self.previous_token.value))
             return type(self.previous_token.value)
         elif self.match('TK_REALLIT' , do_not_exit = True):
             self.codes.append((opcodes['pushi'], self.previous_token.value))
             return type(self.previous_token.value)
-        #elif self.match(symbols['(']):
-        #    print "reached left parenthesis"
-        #    self.prod_L()
-        #    self.match(symbols[')'])
-        #elif self.match(symbols[')']):
-        #    print "reached right parenthesis"
+        elif self.match(symbols['('] , do_not_exit = True):
+            print "reached left parenthesis"
+            self.prod_L()
+            self.match(symbols[')'])
+        elif self.match(symbols[')'], do_not_exit = True):
+            print "reached right parenthesis"
         elif self.match(keywords['write'],do_not_exit =True):
             result = self.write_statement()
             self.codes.append((opcodes['print'], result))
@@ -178,20 +177,25 @@ class Parser():
     def prod_L_prime(self):
         if self.match(operators['='], do_not_exit = True):
             self.prod_E()
+            self.codes.append((opcodes['equ'], None))
         elif self.match(operators['<>'], do_not_exit = True):
             self.prod_E()
+            self.codes.append((opcodes['neq'] , None))
         elif self.match(operators['>'], do_not_exit = True):
             self.prod_E()
+            self.codes.append((opcodes['greater'] , None))
         elif self.match(operators['<'], do_not_exit = True):
             self.prod_E()
+            self.codes.append((opcodes['less'] , None))
         elif self.match(operators['<='], do_not_exit = True):
-            print "matched less than or equal to\n"
             self.prod_E()
+            self.codes.append((opcodes['leq'] , None))
         elif self.match(operators['>='], do_not_exit = True):
             self.prod_E()
+            self.codes.append((opcodes['geq'] , None))
         elif self.match(operators['in'], do_not_exit = True):
             self.prod_E()
-    
+            self.codes.append((opcodes['in'] , None))
     def declarations(self):
         if self.current_token.name == keywords['var']:
             self.var_statement()
@@ -206,7 +210,7 @@ class Parser():
         FOR NEXT TIME HAVE TO FINISH BEGIN_STATEMENT  IF CLAUSE TO CONTINUE CORRECTLY
         """
         self.match(keywords['begin'])
-        print "successfully matched first begin\n"
+        #print "successfully matched first begin\n"
         if self.tokens and self.current_token.name != keywords['end']:
             #print "matched end\n"
             self.statement_list()
@@ -216,38 +220,45 @@ class Parser():
     
     def write_statement(self):
         self.match(symbols['('])
-        self.match(symbols['"'])
-        result = ''
-        while self.current_token.name != symbols['"']:
-            print "this is value" , self.current_token.value
-            print "this is name" , self.current_token.name
-            result += self.current_token.value + ' '
-            self.next_token()
-        self.match(symbols['"'])
-        self.match(symbols[')'])
-        return result
-
+        
+        if self.match(symbols['"'], do_not_exit = True):
+            result = ''
+            while self.current_token.name != symbols['"']:
+                #print "this is value" , self.current_token.value
+                #print "this is name" , self.current_token.name
+                result += self.current_token.value + ' '
+                self.next_token()
+            self.match(symbols['"'])
+            self.match(symbols[')'])
+            return result
+        elif self.match('TK_IDENTIFIER') and self.previous_token.value in self.symboltable:
+            #print self.symboltable.index(self.previous_token.value)
+            self.codes.append((opcodes['print'] ,self.symboltable.index(self.previous_token.value)))
+            self.match(symbols[')'])
+        
     def statement_list(self):
         """
         while there's tokens left and keyword is not end do statement() function
         """
         while self.tokens and self.current_token.name != keywords['end']:        
             self.statement()
-            #self.match(symbols[';'])
-            #print "successfully matched semicolon\n"
             
              
-
+    
     def statement(self):
         if self.current_token.name == keywords['begin']:
             self.begin_statement()
+        elif self.current_token.name == keywords['if']:
+            self.if_statement()
+       
         elif self.tokens and self.current_token.name != keywords['end']:
             #print "about to try prod_e\n"
             self.prod_E()
             self.match(symbols[';'])
+        
     def if_statement(self):
-        self.match(keywords['if'])
         print "matched if"
+        self.if_stat()
     def while_statement(self):
         self.match(keywords['while'])
         print "matched while"
@@ -257,8 +268,8 @@ class Parser():
     def repeat_statement(self):
         self.match(keywords['repeat'])
         print "matched repeat"
+    
     def assignment(self, lhs):
-        print "matched Assignment"
         rhs = self.prod_L()
         #rhs = self.typematcher(self.previous_token.value, rhs)
         self.codes.append((opcodes['pop'], self.symboltable.index(lhs.value)))
@@ -274,4 +285,21 @@ class Parser():
             print "Error not same type"
             exit(0)
     def if_stat(self):
-        pass
+        self.match(keywords['if'])
+        self.prod_L()
+        #if type(self.prod_L()) != bool:
+        #    print "Error: if does not evaluate to true"
+        #    exit(0)
+        self.match(keywords['then'])
+        ran = random.random()
+        self.codes.append((opcodes['jfalse'], ran ))
+        self.statement()
+        self.codes.append((opcodes['label'], ran))
+        if self.current_token.name == keywords['else']:
+            self.match(keywords['else'])
+        
+            self.codes.append((opcodes['jtrue'], ran ))
+            self.statement()
+            self.codes.append((opcodes['label'], ran))
+            
+        self.codes.append((opcodes['pop'],None))

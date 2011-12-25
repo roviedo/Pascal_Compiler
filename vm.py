@@ -9,9 +9,10 @@ class VirtualMachine():
         self.codes = codes
         self.stack = []
         self.registers = {}
+        self.curr_inst_index = 0
     def execute(self):
         for a, b in self.codes:
-            print "ThIs IS THE REGISTERS: " , self.registers
+            #print "ThIs IS THE REGISTERS: " , self.registers
             if a == opcodes['pushi']:
                 self.stack.append(b)
             elif a == opcodes['push']:
@@ -19,8 +20,8 @@ class VirtualMachine():
                     self.registers[b] = None
                 else:
                     self.stack.append(self.registers[b])
-                    print "This is stack" , self.stack
-                    print "after pushing b", b
+                    #print "This is stack" , self.stack
+                    #print "after pushing b", b
             elif a == opcodes['move']:
                 continue
             elif a == opcodes['movei']:
@@ -30,16 +31,19 @@ class VirtualMachine():
                  j = self.stack.pop()
                  k = j * i
                  self.stack.append(k)
-                 print "this is multiplication" , k , "\n"
+                 #print "this is multiplication" , k , "\n"
             elif a == opcodes['pop']:
                 result =self.stack.pop()
-                print "this is result" , result 
+                #print "this is result" , result 
                 if b != None:
                     self.registers[b] = result
             elif a == opcodes['halt']:
                 continue
             elif a == opcodes['print']:
-                print b
+                if type(b) == int:
+                    print self.registers[b]
+                elif type(b) == str:
+                    print b
             elif a == opcodes['println']:
                 print b + "\n"
             elif a == opcodes['div']:
@@ -47,21 +51,64 @@ class VirtualMachine():
                  j = self.stack.pop()
                  k = j / i
                  self.stack.append(k)
-                 print "this is division" , k , "\n"
+                 #print "this is division" , k , "\n"
 
             elif a == opcodes['add']:
                  i = self.stack.pop()
                  j = self.stack.pop()
                  k = j + i
                  self.stack.append(k)
-                 print "this is add" , k 
+                 #print "this is add" , k 
             elif a == opcodes['sub']:
                  i = self.stack.pop()
                  j = self.stack.pop()
                  k = j - i
                  self.stack.append(k)
-                 print "this is sub", k
+                 #print "this is sub", k
             elif a == opcodes['dup']:
                 continue
             elif a == opcodes['exch']:
                 continue
+            elif a == opcodes['equ']:
+                i = self.stack.pop()
+                j = self.stack.pop()
+                k = j == i
+                self.stack.append(k)
+            elif a == opcodes['neq']:
+                i = self.stack.pop()
+                j = self.stack.pop()
+                k = j != i
+                self.stack.append(k)
+            elif a == opcodes['leq']:
+                i = self.stack.pop()
+                j = self.stack.pop()
+                k = j <= i
+                self.stack.append(k)
+            elif a == opcodes['geq']:
+                i = self.stack.pop()
+                j = self.stack.pop()
+                k = j >= i
+                self.stack.append(k)
+            elif a == opcodes['greater']:
+                i = self.stack.pop()
+                j = self.stack.pop()
+                k = j > i
+                self.stack.append(k)
+            elif a == opcodes['less']:
+                i = self.stack.pop()
+                j = self.stack.pop()
+                k = j < i
+                self.stack.append(k)
+            elif a == opcodes['jfalse']: 
+                i = self.stack[len(self.stack)-1]
+                if not i:
+                    while self.codes[self.curr_inst_index][0] != opcodes['label']:
+                        del self.codes[self.curr_inst_index]
+            elif a == opcodes['jtrue']: 
+                i = self.stack[len(self.stack)-1]
+                if i:
+                    while self.codes[self.curr_inst_index][0] != opcodes['label']:
+                        del self.codes[self.curr_inst_index]
+                            
+                            
+            self.curr_inst_index += 1

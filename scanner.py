@@ -1,4 +1,5 @@
 import re
+import sys
 from constants import *
 
 class Token:
@@ -12,17 +13,16 @@ class Scanner:
         self.tokens = []
         self.variable_matcher = re.compile('^([A-Za-z]|(_))([A-Za-z]|(_)|[0-9])*$')
 
-    def read_file(self):
-        self.data  = open('test1.pas' , 'r').read()
+    def read_file(self, testfile):
+        #self.data  = open('variable_test.pas' , 'r').read()
+        self.data = open(testfile, 'r').read()
         for symbol, token in symbols.items():
             if symbol != '.' and symbol != '=' and symbol != ':':
                 self.data = self.data.replace(str(symbol), ' ' + symbol + ' ')
-        print "\nthis is before replace", self.data
+        #print "\nthis is before replace", self.data
         self.data = self.data.replace('end.' , 'end . ')
-        print "\nthis is after replace ...." , self.data
         self.data = self.data.split()
-        print "\nthis is after split ...." , self.data
-        #self.split_data()
+        
     def variable(self):
         #begin with letter or underscore
         #Can only contain letters, numbers, or underscore
@@ -47,27 +47,24 @@ class Scanner:
             else:
                 newdata.append(i)
         self.data = newdata
-        print self.data
+        
 
     def tokenize_file(self):
         for i in self.data:
             if i in keywords:
-                print "Got keyword" , keywords[i]
                 self.tokens.append(Token(keywords[i],i))
             elif i in operators:
-                print "Got operators" , operators[i]
                 self.tokens.append(Token(operators[i]))
             elif i in symbols:
-                print "Got symbols" , symbols[i]
                 self.tokens.append(Token(symbols[i]))
             elif i.isdigit():
-                print "TK_INTLIT"
+                #print "TK_INTLIT"
                 self.tokens.append(Token('TK_INTLIT', value = int(i)))
             elif self.isreal(i):
-                print "TK_REAL"
+                #print "TK_REAL"
                 self.tokens.append(Token('TK_REALLIT', value = float(i)))
             elif self.variable_matcher.match(i):
-                print "TK_IDENTIFIER"
+                #print "TK_IDENTIFIER"
                 self.tokens.append(Token('TK_IDENTIFIER', value = i))
             else:
                 print "Error", i
@@ -82,12 +79,3 @@ class Scanner:
             return result
         except ValueError:
             return False
-"""
-def main():
-    x = Scanner()
-    x.read_file()
-    x.tokenize_file()
-    
-if __name__ == "__main__":
-    main()
-"""

@@ -1,4 +1,31 @@
-This is my compiler:
+STUDENT : RAUL OVIEDO
+ID (last four) : 8727
+
+COMPILER FOR PASCAL in Python Programming Language
 
 Variable Rules in Pascal:
 http://www.functionx.com/objectpascal/Lesson02.htm
+
+To run the compiler in Unix/Linux Terminal command line:
+ex: python pascal_compiler.py
+note: in scanner.py you may change the input file in the line below to a test file of your choice.
+
+def read_file(self):
+        self.data  = open('variable_test.pas' , 'r').read()
+
+The files provided are:
+pascal_compiler.py -- this file runs the compiler
+constants.py  -- contains the keywords, operators, symbols and opcodes
+scanner.py    -- this is the scanner class for the compiler
+parser.py     -- this is the parser class for the compiler
+vm.py         -- virtual machine of compiler
+
+Test Files:
+variable_test.pas --this is the pascal file to test variable declarations
+condition_test.pas -- test of "if" statement
+condition_test2.pas -- test of "if" statement version 2
+assignment --test for variable assignment
+print_test.pas --test write and writeln
+
+
+ 
