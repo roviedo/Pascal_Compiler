@@ -36,6 +36,7 @@ keywords = {
     'while':'TK_WHILE',
     'with':'TK_WITH',
     'function': 'TK_FUNC',
+    'repeat' : 'TK_REPEAT',
 }
 
 
@@ -99,4 +100,5 @@ opcodes = {
     'jtrue' : 21,
     'jfalse': 22,
     'label':23,
+    'repeat':24,
 }

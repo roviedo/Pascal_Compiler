@@ -27,12 +27,12 @@ class Parser():
         """
         
         if(self.current_token.name == name):
-            print "MATCH: successfully matched" , self.current_token.name
+            #print "MATCH: successfully matched" , self.current_token.name
             self.next_token()
             
             return True
         elif not do_not_exit:
-            #print "MATCH: error, was expecting: " + name + " got : " + self.current_token.name
+            print "MATCH: error, was expecting: " + name + " got : " + self.current_token.name
             exit(0)
         return False
     def next_token(self):
@@ -153,7 +153,6 @@ class Parser():
             self.codes.append((opcodes['pushi'], self.previous_token.value))
             return type(self.previous_token.value)
         elif self.match(symbols['('] , do_not_exit = True):
-            print "reached left parenthesis"
             self.prod_L()
             self.match(symbols[')'])
         elif self.match(symbols[')'], do_not_exit = True):
@@ -250,7 +249,12 @@ class Parser():
             self.begin_statement()
         elif self.current_token.name == keywords['if']:
             self.if_statement()
-       
+        elif self.current_token.name == keywords['while']:
+            self.while_statement()
+        elif self.current_token.name == keywords['repeat']:
+            self.repeat_statement()
+        elif self.current_token.name == keywords['switch']:
+            self.switch_statement()
         elif self.tokens and self.current_token.name != keywords['end']:
             #print "about to try prod_e\n"
             self.prod_E()
@@ -262,12 +266,27 @@ class Parser():
     def while_statement(self):
         self.match(keywords['while'])
         print "matched while"
+        start_index = len(self.codes)
+        self.prod_L()
+        self.match(keywords['do'])
+        ran = random.random()
+        self.codes.append((opcodes['jfalse'], ran ))
+        self.statement()
+        self.codes.append((opcodes['pop'],None))
+        self.codes.append((opcodes['jmp'], start_index))
+        self.codes.append((opcodes['label'], ran))
     def for_statement(self):
         self.match(keywords['for'])
         print "matched for"
+        
     def repeat_statement(self):
         self.match(keywords['repeat'])
-        print "matched repeat"
+        self.statement()
+        self.match(keywords['then'])
+        ran = random.random()
+        self.codes.append((opcodes['jfalse'], ran ))
+        self.prod_L()
+        self.codes.append((opcodes['label'], ran))
     
     def assignment(self, lhs):
         rhs = self.prod_L()
@@ -287,9 +306,6 @@ class Parser():
     def if_stat(self):
         self.match(keywords['if'])
         self.prod_L()
-        #if type(self.prod_L()) != bool:
-        #    print "Error: if does not evaluate to true"
-        #    exit(0)
         self.match(keywords['then'])
         ran = random.random()
         self.codes.append((opcodes['jfalse'], ran ))
@@ -303,3 +319,4 @@ class Parser():
             self.codes.append((opcodes['label'], ran))
             
         self.codes.append((opcodes['pop'],None))
+    

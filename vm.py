@@ -13,6 +13,7 @@ class VirtualMachine():
     def execute(self):
         for a, b in self.codes:
             #print "ThIs IS THE REGISTERS: " , self.registers
+            print "this is the stack " , self.stack , "\n"
             if a == opcodes['pushi']:
                 self.stack.append(b)
             elif a == opcodes['push']:
@@ -110,5 +111,24 @@ class VirtualMachine():
                     while self.codes[self.curr_inst_index][0] != opcodes['label']:
                         del self.codes[self.curr_inst_index]
                             
-                            
+            elif a == opcodes['jmp']:
+                #slice = []
+                print "this is codes" , self.codes
+                l= self.codes[b:self.curr_inst_index+1:1]
+                #for i in range(b, self.curr_inst_index):
+                #    slice.append(self.codes[i])
+                #print "this is slice before", l
+                l.reverse()
+                print "this is slice ", l
+                for i in l:
+                    #print "this is i 0 " , i
+                    if i[0] == opcodes['jmp']:
+                        alteredjmp = (opcodes['jmp'], i[1]+len(l))
+                        #print " im in if jump state..."
+                        self.codes.insert(self.curr_inst_index+1,alteredjmp)
+                    else:
+                        self.codes.insert(self.curr_inst_index+1,i)
+                        
+                print "Codes after insert" , self.codes
+                raw_input()
             self.curr_inst_index += 1
