@@ -256,16 +256,14 @@ class Parser():
         elif self.current_token.name == keywords['switch']:
             self.switch_statement()
         elif self.tokens and self.current_token.name != keywords['end']:
-            #print "about to try prod_e\n"
             self.prod_E()
             self.match(symbols[';'])
         
     def if_statement(self):
-        print "matched if"
         self.if_stat()
     def while_statement(self):
         self.match(keywords['while'])
-        print "matched while"
+        #print "matched while"
         start_index = len(self.codes)
         self.prod_L()
         self.match(keywords['do'])
@@ -288,6 +286,9 @@ class Parser():
         self.prod_L()
         self.codes.append((opcodes['label'], ran))
     
+    def switch_stat(self):
+        self.match(keywords['switch'])
+        print "matched switch"
     def assignment(self, lhs):
         rhs = self.prod_L()
         #rhs = self.typematcher(self.previous_token.value, rhs)
